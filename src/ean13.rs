@@ -10,14 +10,18 @@
     SPDX-License-Identifier: MIT OR Apache-2.0
 */
 
-pub mod ean13;
+use std::num::ParseIntError;
 
-#[cfg(test)]
-mod tests
+#[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
+pub struct EAN13
 {
-    #[test]
-    fn it_works()
+    code: u64,
+}
+
+impl EAN13
+{
+    pub fn new(barcode: &str) -> Result<EAN13, ParseIntError>
     {
-        assert_eq!(2 + 2, 4);
+        Ok(EAN13 { code: barcode.parse::<u64>()?, })
     }
 }
