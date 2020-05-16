@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: CC0-1.0
+
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.1.7
+    hooks:
+    -   id: insert-license
+        files: \.rs$
+        args:
+        - --fuzzy-match-generates-todo
+        - --license-filepath
+        - license_header.txt
+        - --comment-style
+        - /*|   |*/
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.4.4
+    hooks:
+    -   id: autopep8
+-   repo: https://github.com/mutoso/pre-commit-hooks
+    rev: v0.3.0
+    hooks:
+    -   id: cargo-fmt
+    -   id: valid-utf8
+    -   id: commitlint
+        stages: [commit-msg]
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-added-large-files
+    -   id: check-byte-order-marker
+    -   id: check-case-conflict
+    -   id: check-executables-have-shebangs
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: check-symlinks
+    -   id: check-toml
+    -   id: check-vcs-permalinks
+    -   id: check-xml
+    -   id: check-yaml
+    -   id: detect-private-key
+    -   id: end-of-file-fixer
+    -   id: forbid-new-submodules
+    -   id: mixed-line-ending
+    -   id: requirements-txt-fixer
+    -   id: trailing-whitespace
