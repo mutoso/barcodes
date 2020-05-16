@@ -21,9 +21,55 @@ pub struct EAN13
 
 impl EAN13
 {
-    pub fn new(barcode: &str) -> Result<EAN13, ParseIntError>
+    pub fn new(barcode: &str) -> Result<EAN13, EAN13ParseError>
     {
-        Ok(EAN13 { code: barcode.parse::<u64>()?, })
+        if barcode.len() != 13
+        {
+            return Err(EAN13ParseError::Length(barcode.len() as u8));
+        }
+
+        let e = EAN13 { code: barcode.parse::<u64>()?, };
+
+        let calc = e.calculate_check_digit();
+        let existing = e.check_digit();
+        if calc != existing
+        {
+            return Err(EAN13ParseError::CheckDigit(calc, existing));
+        }
+
+        Ok(e)
+    }
+
+    fn calculate_check_digit(&self) -> u8
+    {
+        let mut digits: Vec<u8> = self.code
+                                      .to_string()
+                                      .chars()
+                                      .map(|c| c.to_digit(10).unwrap() as u8)
+                                      .collect();
+        // Remove the existing check digit
+        digits.pop();
+
+        let partial_sum: u8 = digits.iter()
+                                    .enumerate()
+                                    .map(|(i, e)| {
+                                        if i % 2 == 1
+                                        {
+                                            e * 3
+                                        }
+                                        else
+                                        {
+                                            e * 1
+                                        }
+                                    })
+                                    .sum();
+        let check_digit = 10 - (partial_sum % 10);
+        check_digit as u8
+    }
+
+    pub fn check_digit(&self) -> u8
+    {
+        (self.code % 10) as u8
     }
 }
 
@@ -32,5 +78,21 @@ impl fmt::Display for EAN13
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
     {
         write!(f, "{:013}", self.code)
+    }
+}
+
+#[derive(Debug)]
+pub enum EAN13ParseError
+{
+    Length(u8),
+    Parse(ParseIntError),
+    CheckDigit(u8, u8),
+}
+
+impl From<ParseIntError> for EAN13ParseError
+{
+    fn from(err: ParseIntError) -> EAN13ParseError
+    {
+        EAN13ParseError::Parse(err)
     }
 }
