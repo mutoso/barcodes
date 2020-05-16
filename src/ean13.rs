@@ -10,7 +10,8 @@
     SPDX-License-Identifier: MIT OR Apache-2.0
 */
 
-use std::num::ParseIntError;
+use std::{fmt,
+          num::ParseIntError};
 
 #[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub struct EAN13
@@ -23,5 +24,13 @@ impl EAN13
     pub fn new(barcode: &str) -> Result<EAN13, ParseIntError>
     {
         Ok(EAN13 { code: barcode.parse::<u64>()?, })
+    }
+}
+
+impl fmt::Display for EAN13
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+    {
+        write!(f, "{:013}", self.code)
     }
 }
