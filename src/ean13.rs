@@ -42,8 +42,7 @@ impl EAN13
 
     fn calculate_check_digit(&self) -> u8
     {
-        let mut digits: Vec<u8> = self.code
-                                      .to_string()
+        let mut digits: Vec<u8> = self.to_string()
                                       .chars()
                                       .map(|c| c.to_digit(10).unwrap() as u8)
                                       .collect();
