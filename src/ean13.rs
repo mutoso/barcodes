@@ -63,7 +63,8 @@ impl EAN13
                                         }
                                     })
                                     .sum();
-        let check_digit = 10 - (partial_sum % 10);
+        let m = partial_sum % 10;
+        let check_digit = if m != 0 { 10 - m } else { m };
         check_digit as u8
     }
 
