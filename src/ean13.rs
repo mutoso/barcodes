@@ -13,6 +13,8 @@
 use std::{fmt,
           num::ParseIntError};
 
+use crate::upc::UPC;
+
 #[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub struct EAN13
 {
@@ -78,6 +80,14 @@ impl fmt::Display for EAN13
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
     {
         write!(f, "{:013}", self.code)
+    }
+}
+
+impl From<UPC> for EAN13
+{
+    fn from(u: UPC) -> EAN13
+    {
+        EAN13 { code: u.to_string().parse::<u64>().unwrap(), }
     }
 }
 
