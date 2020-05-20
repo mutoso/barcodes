@@ -27,7 +27,7 @@ impl EAN13
     {
         if barcode.len() != 13
         {
-            return Err(EAN13ParseError::Length(barcode.len() as u8));
+            return Err(EAN13ParseError::Length(barcode.len()));
         }
 
         let e = EAN13 { code: barcode.parse::<u64>()?, };
@@ -94,7 +94,7 @@ impl From<UPC> for EAN13
 #[derive(Debug)]
 pub enum EAN13ParseError
 {
-    Length(u8),
+    Length(usize),
     Parse(ParseIntError),
     CheckDigit(u8, u8),
 }
