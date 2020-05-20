@@ -15,7 +15,10 @@ use std::{fmt,
 
 use crate::upc::UPC;
 
-#[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
+use serde::{Deserialize,
+            Serialize};
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub struct EAN13
 {
     code: u64,
