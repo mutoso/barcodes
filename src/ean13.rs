@@ -16,9 +16,11 @@ use std::{fmt,
 use crate::upc::UPC;
 
 use serde::{Deserialize,
-            Serialize};
+            Deserializer,
+            Serialize,
+            Serializer};
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
+#[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub struct EAN13
 {
     code: u64,
@@ -91,6 +93,30 @@ impl From<UPC> for EAN13
     fn from(u: UPC) -> EAN13
     {
         EAN13 { code: u.to_string().parse::<u64>().unwrap(), }
+    }
+}
+
+impl Serialize for EAN13
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        serializer.serialize_str(&format!("{}", *self))
+    }
+}
+
+impl<'de> Deserialize<'de> for EAN13
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where D: Deserializer<'de>
+    {
+        use serde::de::Error;
+
+        // Deserialize the string
+        let s = String::deserialize(deserializer)?;
+
+        // Create a new EAN13 from String
+        EAN13::new(&s).map_err(|e| D::Error::custom(format!("{:?}", e)))
     }
 }
 

@@ -14,9 +14,11 @@ use std::{fmt,
           num::ParseIntError};
 
 use serde::{Deserialize,
-            Serialize};
+            Deserializer,
+            Serialize,
+            Serializer};
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
+#[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub struct UPC
 {
     code: u64,
@@ -81,6 +83,30 @@ impl fmt::Display for UPC
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
     {
         write!(f, "{:012}", self.code)
+    }
+}
+
+impl Serialize for UPC
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        serializer.serialize_str(&format!("{}", *self))
+    }
+}
+
+impl<'de> Deserialize<'de> for UPC
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where D: Deserializer<'de>
+    {
+        use serde::de::Error;
+
+        // Deserialize the string
+        let s = String::deserialize(deserializer)?;
+
+        // Create a new UPC from String
+        UPC::new(&s).map_err(|e| D::Error::custom(format!("{:?}", e)))
     }
 }
 
