@@ -11,6 +11,7 @@
 */
 
 pub mod ean13;
+pub mod plu;
 pub mod upc;
 
 #[cfg(test)]
